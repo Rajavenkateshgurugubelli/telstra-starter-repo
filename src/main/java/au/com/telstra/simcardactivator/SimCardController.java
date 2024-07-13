@@ -16,10 +16,14 @@ public class SimCardController {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@PostMapping("/data")
-	public ResponseEntity<String> simCardDataCollector(@RequestBody User user) {
+	public ResponseEntity<String> simCardDataCollector(@RequestBody Users user) {
 		ActuatorRequest actuatorRequest = new ActuatorRequest(user.getIccid());
 
+		System.out.println(actuatorRequest);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -27,16 +31,30 @@ public class SimCardController {
 
 		ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8444/actuate", requestEntity,
 				String.class);
+		
+		if (response.getStatusCode().is2xxSuccessful()) {
+			user.setActive(true);
+		} else {
+			user.setActive(false);
+		}
+
+		userRepository.save(user);
+
+		System.out.println(user.toString());
 
 		return response;
 	}
 
-
+	// Inner class for the actuator request payload
 	public static class ActuatorRequest {
 		private String iccid;
 
 		public ActuatorRequest(String iccid) {
 			this.iccid = iccid;
+		}
+
+		public String getIccid() {
+			return iccid;
 		}
 
 	}
