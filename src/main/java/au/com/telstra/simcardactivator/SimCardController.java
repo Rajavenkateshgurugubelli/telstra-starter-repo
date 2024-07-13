@@ -20,7 +20,6 @@ public class SimCardController {
 	public ResponseEntity<String> simCardDataCollector(@RequestBody User user) {
 		ActuatorRequest actuatorRequest = new ActuatorRequest(user.getIccid());
 
-		System.out.println(actuatorRequest);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -32,18 +31,13 @@ public class SimCardController {
 		return response;
 	}
 
-	// Inner class for the actuator request payload
+
 	public static class ActuatorRequest {
 		private String iccid;
 
 		public ActuatorRequest(String iccid) {
 			this.iccid = iccid;
 		}
-
-		public String getIccid() {
-			return iccid;
-		}
-
 
 	}
 	}
